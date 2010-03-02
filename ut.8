@@ -1,0 +1,76 @@
+.\"
+.\" Copyright (c) 2009, 2010 bytemine GmbH <info@bytemine.net>
+.\"
+.\" Permission to use, copy, modify, and distribute this software for any
+.\" purpose with or without fee is hereby granted, provided that the above
+.\" copyright notice and this permission notice appear in all copies.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+.\" WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+.\" MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+.\" ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+.\" WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+.\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+.\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+.\"
+
+.\"
+.\"	##   Author: Holger Rasch <rasch@bytemine.net>        ##
+.\"	##   http://www.bytemine.net                          ##
+.\"
+.\" ut.8
+.Dd Jul 9, 2009
+.Dt UT 8
+.Os "bytemine"
+.Sh NAME
+.Nm ut
+.Nd multiplex uni-/bidirectional streams onto stdin/stdout
+.Sh SYNOPSIS
+.Nm ut
+.Op Fl c Ar config
+.Sh DESCRIPTION
+.Pp
+The
+.Nm
+utility performs multiplexing of upto 254 uni- (in or out) or
+bidirectional channels onto its stdin/stdout pair of file
+descriptors.
+.Pp
+The multiplexing is done by using special prefixes on the
+main (stdin/stdout) channel, in order to identify the client
+channels, the command channel and the debug/message channel.
+Input on the main channel is strictly line based, i.e.,
+content extends from the end of the prefix to, and including,
+the end-of-line (\en). For the output on the main channel,
+this is mostly the same, except that a special prefix type
+exists, which signals that the end-of-line has to be discarded.
+.Pp
+.Nm
+is not meant to be used as a standalone tool, but mainly
+for use by other
+.No ( Nm
+aware) programs, which too perform
+the prefix based mux/demux scheme.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl c Ar config
+Set the name of an alternate config file to use.
+.Sh FILES
+.Bl -tag -width /etc/btm/ut.conf -compact
+.It Pa /etc/btm/ut.conf
+default config file for
+.Nm ut .
+Specifies which channels to offer
+for multiplexing and how to access them.
+.El
+.Pp
+The
+.Fl c
+flag may be used to specify a different config file.
+.Sh SEE ALSO
+.Xr ut.conf 5 ,
+.Xr bytemine-appliance 8
+.Sh AUTHORS
+.An Holger Rasch
+.Aq rasch@bytemine.net

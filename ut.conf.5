@@ -1,0 +1,157 @@
+.\"
+.\" Copyright (c) 2009, 2010 bytemine GmbH <info@bytemine.net>
+.\"
+.\" Permission to use, copy, modify, and distribute this software for any
+.\" purpose with or without fee is hereby granted, provided that the above
+.\" copyright notice and this permission notice appear in all copies.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+.\" WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+.\" MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+.\" ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+.\" WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+.\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+.\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+.\"
+
+.\"
+.\"	##   Author: Holger Rasch <rasch@bytemine.net>        ##
+.\"	##   http://www.bytemine.net                          ##
+.\"
+.\" ut.conf.5
+.Dd Jul 9, 2009
+.Dt UT.CONF 5
+.Os "bytemine"
+.Sh NAME
+.Nm ut.conf
+.Nd ut configuration file
+.Sh DESCRIPTION
+.Pp
+The
+.Nm
+file contains configuration information for
+.Xr ut 8 .
+It is required for successful operation of
+.Xr ut 8 .
+.Pp
+The
+.Nm
+file can contain the following parts:
+.Pp
+A keepalive statement consisting of the keyword
+.Em keepalive
+followed by the interval in seconds. 
+.Pp
+A timeout statement consisting of the keyword
+.Em timeout
+followed by a time in seconds. This timeout is used
+to detect a stalled main output (stdout, towards
+the caller), i.e., if there is something queued for
+output on the main output for more than the specified
+time without any progress, the main output is considered
+stalled and
+.Xr ut 8
+exits. The default value is 0, turning this feature of.
+.Pp
+A message statement consisting of the keyword
+.Em msg
+followed by either one
+.Ql Em \&"
+enclosed string \(em or a
+.Ql Em { ,
+then one or more such strings, and finally a
+.Ql Em } .
+.Pp
+A log statement consisting of the keyword
+.Em log
+followed by a
+.Ql Em \&"
+enclosed string, which specifies the path for the
+main logfile. This file will contain everything read and written
+by
+.Xr ut 8
+on the main channel (stdin/stdout).
+.Pp
+At least one channel definition consisting of the keyword
+.Em channel
+followed by the arbitrary channel name (enclosed in
+.Ql Em \&" )
+and the actual definition enclosed in
+.Ql Em {
+and
+.Ql Em } .
+
+The actual definition consists of an optional message statement
+(like above), the keyword
+.Em type
+with a quoted string or one of
+.Em VPNM ,
+.Em BACI ,
+.Em BASD ,
+.Em FLRD ,
+.Em FLWR
+(apart from VPNM obsolete, but still supported). This type has no meaning
+inside
+.Xr ut 8
+its purpose being a hint to the user of the channel what kind of data
+to expect or is expected.
+Then follows the keyword
+.Em method
+followed by
+.Ql Em { ,
+access type
+.Em ( unix ,
+.Em inet
+or 
+.Em popen ) ,
+a string specifying the path to the socket (unix), a hostname (inet) followed
+by the port number, or the command string to pass to /bin/sh (popen),
+and finally
+.Ql Em } .
+Additionally, a log statement (like above) can used here
+to specify a log file containing IO on this channel only.
+.Pp
+White-space, including
+.Ql \en ,
+is ignored.
+.Pp
+Comments begin with the
+.Ql #
+character and extend to the end of the line.
+.Sh EXAMPLES
+A configuration which provides a small general message
+and access to a uxix domain (stream) socket (e.g., the
+openvpn management interface) will look like this:
+.Pp
+.Bd -unfilled -offset indent
+
+# output a keepalive message every minute
+keepalive 60
+
+# consider the main output dead (and exit) after 30 seconds
+timeout 30
+
+# contact info
+msg {
+        "in case of problems please contact"
+        "admin@example.org"
+}
+
+# access to the openvpn management interface
+channel "VPN office 1" {
+        type VPNM                    # type for VPNmanager
+        method { unix "/var/run/socket-name" }
+}
+.Ed
+.Pp
+Any
+.Nm
+must contain at least one channel definition, otherwise
+.Xr ut 8
+will error out on startup.
+.Sh SEE ALSO
+.Xr ut 8 ,
+.Xr bytemine-appliance 8
+.Sh AUTHORS
+.An Holger Rasch
+.Aq rasch@bytemine.net
