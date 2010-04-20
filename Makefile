@@ -31,7 +31,7 @@ DEFS+= -DUT_KASTRING=\"___PING___\"
 DEBUG= -DDEBUG -g
 
 # warning flags
-WARN= -Wall -W -std=c99 -pedantic
+WARN= -Wall -W #-std=c99 -pedantic
 
 CFLAGS+= $(WARN) $(DEFS) -DUT_VERSION=\"$(UT_VERSION)\"
 
