@@ -54,6 +54,7 @@
 #include <sys/uio.h>
 #include <unistd.h>
 #include <poll.h>
+#include <time.h>
 #include <string.h>
 #include <errno.h>
 
